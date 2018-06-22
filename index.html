@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="sytle.css" />
+    <script src="app.js"></script>
+    <script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+<body style ="background-color: lightcoral">
+    <h4 class="text-center" style="color: rgb(17, 55, 105)">Click on a button to display 10 giphs and their rating. You may also add your own button with your own search.</p><br>
+        <p>If a full search can not be completed then you will be notified. Try clicking on pictures to make them something more!!!!</h4>
+    
+    <div id="buttons"></div>
+
+   
+    <form>
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="ninja-input" class="form-control" placeholder="I am the night">
+            </div>
+            <input id="addNinja" type="submit" class="btn btn-success" value="..silence">
+            <span id="entry" style="color: rgb(64, 29, 160); background: rgb(189, 107, 53)"></span>
+        </div>
+    </form>
+    
+    <div id="ratings"></div>
+
+
+
+
+
+<script>
+var topics = ["dnd", "ninja", "halo", "beer", "exercise", "kickboxing", "overwatch", "tequila", "books", "music"];
+var topicsImage = "";
+
+function showButtons () {
+    $("#buttonItems").empty();
+    $("#space-input").val("");
+    for (var i = 0; i < topics.length; i++) {
+        var button = $("<button class='btn btn-primary'>");
+        button.addClass("ninja");
+        button.attr("ninja-name", topics[i]);
+        button.text(topics[i]);
+        $("#buttonItems").append(button);
+        $("#buttonItems").append(" ");
+    }
+}
+showButtons();
+
+$("#addSpaceThing").on("click", function(event) {
+    $("#entry").empty();
+    event.preventDefault();
+    var ninjaInput = $("#ninja-input").val().trim();
+    var ninjaTerm = $(this).attr("ninja-name");
+    
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + ninjaInput + "&limit=2&api_key=dc6zaTOxFJmzC";
+        $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
+        if (response.pagination.total_count >= 10) {
+            ninjaStuff.push(ninjaInput);
+            showButtons(); }
+        else if (response.pagination.total_count === 0) {
+            $("#entry").html("Sorry No Work.  And Then?"); }
+        else if (response.pagination.total_count === 1) { $("#entry").html("Sorry minor Work,  1 result here."); }
+        else { $("#entry").html("Sorry Minor Work.. only " + response.pagination.total_count + " results here."); }
+        $("#space-input").val("");
+        });
+
+    var queryURL = "https://api.giphy.com/v1/gifs/trending?api_key=" + ninjaInput + "FcDLaRnPt67xdnSwyZW25D9hjiLxFEoX&limit=25&rating=G";
+
+    $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
+        if (response.pagination.total_count >= 10) {
+            mimjaStuff.push(Input);
+            showButtons(); }
+        else if (response.pagination.total_count === 0) {
+            $("#entry").html("Sorry No Work. And Then?"); }
+        else if (response.pagination.total_count === 1) { $("#entry").html("Sorry minor Work, 1 result here."); }
+        else { $("#entry").html("Sorry, there were only " + response.pagination.total_count + "here."); }
+        $("#space-input").val("");
+        });
+});
+
+
+
+</script>
+
+
+
+
+
+</body>
+</html>

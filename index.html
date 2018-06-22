@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="sytle.css" />
-    <script src="app.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="jquery-3.3.1.min.js"></script>
 </head>
 <body>
@@ -34,25 +33,25 @@
 
 
 
-<script>
-var topics = ["dnd", "ninja", "halo", "beer", "exercise", "kickboxing", "overwatch", "tequila", "books", "music"];
-var topicsImage = "";
+<script type="text/javascript">
+var ninjaStuff = ["dnd", "ninja", "halo", "beer", "exercise", "kickboxing", "overwatch", "tequila", "books", "music"];
+var ninjaImage = "";
 
-function showButtons () {
-    $("#buttonItems").empty();
-    $("#space-input").val("");
-    for (var i = 0; i < topics.length; i++) {
+function showbuttons () {
+    $("#buttons").empty();
+    $("#ninja-input").val("");
+    for (var i = 0; i < ninjaStuff.length; i++) {
         var button = $("<button class='btn btn-primary'>");
         button.addClass("ninja");
         button.attr("ninja-name", topics[i]);
         button.text(topics[i]);
-        $("#buttonItems").append(button);
-        $("#buttonItems").append(" ");
+        $("#buttons").append(button);
+        $("#buttons").append(" ");
     }
 }
 showButtons();
 
-$("#addSpaceThing").on("click", function(event) {
+$("#addNinja").on("click", function(event) {
     $("#entry").empty();
     event.preventDefault();
     var ninjaInput = $("#ninja-input").val().trim();
@@ -70,20 +69,65 @@ $("#addSpaceThing").on("click", function(event) {
         $("#space-input").val("");
         });
 
-    var queryURL = "https://api.giphy.com/v1/gifs/trending?api_key=" + ninjaInput + "FcDLaRnPt67xdnSwyZW25D9hjiLxFEoX&limit=25&rating=G";
+    var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + ninjaInput + "FcDLaRnPt67xdnSwyZW25D9hjiLxFEoX&q=ninjaStuff&limit=10&offset=0&rating=PG&lang=en";
 
     $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
         if (response.pagination.total_count >= 10) {
-            mimjaStuff.push(Input);
+            ninjaStuff.push(Input);
             showButtons(); }
         else if (response.pagination.total_count === 0) {
             $("#entry").html("Sorry No Work. And Then?"); }
         else if (response.pagination.total_count === 1) { $("#entry").html("Sorry minor Work, 1 result here."); }
         else { $("#entry").html("Sorry, there were only " + response.pagination.total_count + "here."); }
         $("#space-input").val("");
-        });
+    });
 });
 
+$(document).on("click", ".ninja", display);
+function display() {
+    $("#entry").empty();
+    var ninjaTerm = $(this).attr("ninja-name");
+    var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + ninjaTerm + "FcDLaRnPt67xdnSwyZW25D9hjiLxFEoX&q=ninjaStuff&limit=10&offset=0&rating=PG&lang=en";
+    $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
+        for (var j = 0; j < response.data.length; j++) {
+            
+            // Gets the animated gif URL
+            var active = response.data[j].images.fixed_width.url;
+            // Gets the still gif URL
+            var still = response.data[j].images.fixed_width_still.url;
+            var rating = "Rating: " + (response.data[j].rating).toUpperCase();
+            // Creates the new img item
+            var ninjaImage = $("<img>");
+            
+            // This changes the text color of ratings to green so it can be seen against the space background image.
+            $("#ratings").css("color", "purple");
+            // This creates a new div for the rating so that it maintains the gifs size
+            var ratingDiv = $("<div id='ratingDiv'>" + rating + "</div>");
+            $(ratingDiv).css({"text-align":"center", "font-size":"20px", "width":"200", "display":"block"});
+            ninjaImage.attr({"active":active, "still":still, "src":still, "state":"still"});
+            // This holds the new div for both rating and the image. Every image will have a rating on top of it.
+            var ratingAndImage = $("<div>");
+            $(ratingAndImage).css({"float":"left"});
+            $(ratingAndImage).prepend(ratingDiv, spaceImage);
+            // This adds the rating and image to the page.
+            $("#ratings").prepend(ratingAndImage);
+            // When the user clicks on a picture, this will either start or stop the animation of that picture.
+            $(ninjaImage).on("click", function(event) {
+                // This is just to clear out any error message (if there is one)
+                $("#entry").empty();
+                
+                var state = $(this).attr("state");
+                var source = $(this).attr("src");
+                if (state === "still") {
+                $(this).attr("src", $(this).attr("active"));
+                $(this).attr("state", "active"); }
+                else {
+                $(this).attr("src", $(this).attr("still"));
+                $(this).attr("state", "still"); } 
+            });
+        }
+   });
+}
 
 
 </script>
